@@ -4,8 +4,6 @@ const { sign } = require('jsonwebtoken');
 const router = express.Router();
 const { Users } = require('../models');
 
-require('dotenv').config();
-
 router.post("/register", async (req, res) => {
     try {
         const { username, password, timezone } = req.body;
