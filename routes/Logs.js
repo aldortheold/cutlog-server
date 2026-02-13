@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const { Logs } = require('../models');
+const { validateToken } = require('../middlewares/AuthMiddleware');
 
 const safeSum = async (field, date) => {
     return (await Logs.sum(field, { where: { date } })) ?? 0;
 };
 
-router.get("/totals", async (req, res) => {
+router.get("/totals", validateToken, async (req, res) => {
     try {
         const { date } = req.query;
 
@@ -26,7 +27,7 @@ router.get("/totals", async (req, res) => {
     }
 });
 
-router.post("/create", async (req, res) => {
+router.post("/create", validateToken, async (req, res) => {
     try {
         const log = await Logs.create(req.body);
         const date = log.date;
