@@ -6,7 +6,12 @@ const { Users } = require('../models');
 
 router.post("/register", async (req, res) => {
     try {
-        const { username, password, timezone } = req.body;
+        const { username, password } = req.body;
+        const usernameTaken = await Users.findOne({ where: { username: username } });
+        if (usernameTaken) {
+            res.json({ error: "Username is taken!" });
+            return;
+        }
         bcrypt.hash(password, 10).then(hash => {
             Users.create({
                 username: username,
@@ -18,7 +23,7 @@ router.post("/register", async (req, res) => {
     }
     catch (err) {
         console.error(err);
-        res.status(500).json({ error: "Failed to register user" });
+        res.status(500).json({ error: "Failed to register" });
     }
 });
 
