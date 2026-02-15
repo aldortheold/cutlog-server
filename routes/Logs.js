@@ -3,20 +3,21 @@ const router = express.Router();
 const { Logs } = require('../models');
 const { validateToken } = require('../middlewares/AuthMiddleware');
 
-const safeSum = async (field, date) => {
-    return (await Logs.sum(field, { where: { date } })) ?? 0;
+const safeSum = async (field, date, userId) => {
+    return (await Logs.sum(field, { where: { date, userId } })) ?? 0;
 };
 
 router.get("/totals", validateToken, async (req, res) => {
     try {
         const { date } = req.query;
+        const userId = req.user.id;
 
         const totals = {
-            calories: await safeSum("calories", date),
-            protein: await safeSum("protein", date),
-            fat: await safeSum("fat", date),
-            addedSugar: await safeSum("addedSugar", date),
-            water: await safeSum("water", date)
+            calories: await safeSum("calories", date, userId),
+            protein: await safeSum("protein", date, userId),
+            fat: await safeSum("fat", date, userId),
+            addedSugar: await safeSum("addedSugar", date, userId),
+            water: await safeSum("water", date, userId)
         };
 
         res.json(totals);
