@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const { sign } = require('jsonwebtoken');
 const router = express.Router();
 const { Users } = require('../models');
+const { validateToken } = require('../middlewares/AuthMiddleware');
 
 router.post("/register", async (req, res) => {
     try {
@@ -41,13 +42,15 @@ router.post("/signin", async (req, res) => {
                 return;
             }
             const accessToken = sign({ username: user.username, id: user.id }, process.env.ACCESS_TOKEN);
-            res.json(accessToken);
+            res.json({ token: accessToken, username: user.username, id: user.id });
         });
     }
     catch (err) {
         console.error(err);
         res.status(500).json({ error: "Failed to sign in" });
     }
-})
+});
+
+router.get("/auth", validateToken, (req, res) => res.json(req.user));
 
 module.exports = router;

@@ -29,8 +29,13 @@ router.get("/totals", validateToken, async (req, res) => {
 
 router.post("/create", validateToken, async (req, res) => {
     try {
-        const log = await Logs.create(req.body);
+        const entry = req.body;
+        const userId = req.user.id;
+        entry.userId = userId;
+
+        const log = await Logs.create(entry);
         const date = log.date;
+    
         const totals = {
             calories: await Logs.sum("calories", { where: { date: date } }),
             protein: await Logs.sum("protein", { where: { date: date } }),
@@ -38,6 +43,7 @@ router.post("/create", validateToken, async (req, res) => {
             addedSugar: await Logs.sum("addedSugar", { where: { date: date } }),
             water: parseFloat(await Logs.sum("water", { where: { date: date } }))
         };
+
         res.status(201).json({ log: log, totals: totals });
     }
     catch (err) {
