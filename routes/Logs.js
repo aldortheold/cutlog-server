@@ -52,4 +52,26 @@ router.post("/create", validateToken, async (req, res) => {
     }
 });
 
+router.delete("/undo", validateToken, async (req, res) => {
+    try {
+        const lastLog = await Logs.findOne({
+            where: { userId: req.user.id },
+            order: [["createdAt", "DESC"]]
+        });
+
+        if (!lastLog) {
+            res.json({ error: "No logs to remove" });
+            return;
+        }
+
+        await lastLog.destroy();
+
+        res.status(200).json("Last log removed");
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Unexpected error occurred" });
+    }
+});
+
 module.exports = router;
