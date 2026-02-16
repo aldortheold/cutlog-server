@@ -38,11 +38,11 @@ router.post("/create", validateToken, async (req, res) => {
         const date = log.date;
     
         const totals = {
-            calories: await Logs.sum("calories", { where: { date: date } }),
-            protein: await Logs.sum("protein", { where: { date: date } }),
-            fat: await Logs.sum("fat", { where: { date: date } }),
-            addedSugar: await Logs.sum("addedSugar", { where: { date: date } }),
-            water: parseFloat(await Logs.sum("water", { where: { date: date } }))
+            calories: await safeSum("calories", date, userId),
+            protein: await safeSum("protein", date, userId),
+            fat: await safeSum("fat", date, userId),
+            addedSugar: await safeSum("addedSugar", date, userId),
+            water: await safeSum("water", date, userId)
         };
 
         res.status(201).json({ log: log, totals: totals });
@@ -65,9 +65,19 @@ router.delete("/undo", validateToken, async (req, res) => {
             return;
         }
 
+        const { date, userId } = lastLog;
+
         await lastLog.destroy();
 
-        res.status(200).json("Last log removed");
+        const totals = {
+            calories: await safeSum("calories", date, userId),
+            protein: await safeSum("protein", date, userId),
+            fat: await safeSum("fat", date, userId),
+            addedSugar: await safeSum("addedSugar", date, userId),
+            water: await safeSum("water", date, userId)
+        };
+
+        res.status(200).json(totals);
     }
     catch (err) {
         console.error(err);
