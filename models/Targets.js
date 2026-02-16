@@ -3,22 +3,27 @@ module.exports = (sequelize, DataTypes) => {
         calories: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            defaultValue: 2250
         },
         protein: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            defaultValue: 130
         },
         fat: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            defaultValue: 100
         },
         addedSugar: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            defaultValue: 0
         },
         water: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            defaultValue: 2
         }
     });
 

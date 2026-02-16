@@ -2,26 +2,42 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const { sign } = require('jsonwebtoken');
 const router = express.Router();
-const { Users } = require('../models');
+const { Users, Targets, sequelize } = require('../models');
 const { validateToken } = require('../middlewares/AuthMiddleware');
 
 router.post("/register", async (req, res) => {
+
+    const transaction = await sequelize.transaction();
+
     try {
         const { username, password } = req.body;
-        const usernameTaken = await Users.findOne({ where: { username: username } });
+
+        const usernameTaken = await Users.findOne({ where: { username } });
+
         if (usernameTaken) {
+            await transaction.rollback();
             res.json({ error: "Username is taken!" });
             return;
         }
-        bcrypt.hash(password, 10).then(hash => {
-            Users.create({
-                username: username,
-                password: hash
-            });
-            res.json("User registered successfully");
-        });
+
+        const hash = await bcrypt.hash(password, 10);
+
+        const newUser = await Users.create(
+            { username, password: hash },
+            { transaction: transaction }
+        );
+
+        await Targets.create(
+            { UserId: newUser.id },
+            { transaction: transaction }
+        );
+
+        await transaction.commit();
+
+        res.json("User registered successfully");
     }
     catch (err) {
+        await transaction.rollback();
         console.error(err);
         res.status(500).json({ error: "Failed to register" });
     }
