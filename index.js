@@ -10,6 +10,8 @@ const db = require('./models');
 
 const logRouter = require('./routes/Logs');
 app.use("/logs", logRouter);
+const targetRouter = require('./routes/Targets');
+app.use("/targets", targetRouter);
 const userRouter = require('./routes/Users');
 app.use("/users", userRouter);
 
