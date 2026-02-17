@@ -1,5 +1,13 @@
 module.exports = (sequelize, DataTypes) => {
-    const Logs = sequelize.define("Logs", {
+    const Presets = sequelize.define("Presets", {
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        icon: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
         calories: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -24,19 +32,15 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DECIMAL(4, 2),
             allowNull: false,
             defaultValue: 0,
-        },
-        date: {
-            type: DataTypes.DATEONLY,
-            allowNull: false,
         }
     });
 
-    Logs.associate = (models) => {
-        Logs.belongsTo(models.Users, {
+    Presets.associate = (models) => {
+        Presets.belongsTo(models.Users, {
             foreignKey: { allowNull: false },
             onDelete: "CASCADE",
         });
     };
 
-    return Logs;
+    return Presets;
 }

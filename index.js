@@ -12,6 +12,8 @@ const logRouter = require('./routes/Logs');
 app.use("/logs", logRouter);
 const targetRouter = require('./routes/Targets');
 app.use("/targets", targetRouter);
+const presetRouter = require('./routes/Presets');
+app.use("/presets", presetRouter);
 const userRouter = require('./routes/Users');
 app.use("/users", userRouter);
 
