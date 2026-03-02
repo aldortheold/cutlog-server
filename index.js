@@ -17,4 +17,4 @@ app.use("/presets", presetRouter);
 const userRouter = require('./routes/Users');
 app.use("/users", userRouter);
 
-db.sequelize.sync().then(() => app.listen(3001));
+db.sequelize.sync().then(() => app.listen(process.env.PORT || 3001));
