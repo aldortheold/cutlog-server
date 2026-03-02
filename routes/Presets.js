@@ -8,6 +8,8 @@ router.get("/all", async (req, res) => {
     res.json(presetList);
 });
 
+// why tf didn't it redeploy after the last commit??
+
 router.get("/byUser/:id", async (req, res) => {
     const presetList = await Presets.findAll(
         { where: { UserId: req.params.id } }
